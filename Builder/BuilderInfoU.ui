@@ -1,0 +1,85 @@
+<interface>
+  <object id="window" class="GtkWindow">
+    <property name="visible">True</property>
+    <property name="border-width">0</property>
+    <property name="resizable">False</property>
+    <child>
+      <object id="grid" class="GtkGrid">
+        <property name="visible">True</property>
+        <property name="column-homogeneous">True</property>
+        <child>
+          <object id="CenterInfoLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Center Position:</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object id="PosxInfoLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">X:</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object id="PosxLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">0</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object id="PosxUnitLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">m</property>
+          </object>
+          <packing>
+            <property name="left-attach">3</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+       	<child>
+          <object id="PosyInfoLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Y:</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object id="PosyLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">0</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object id="PosyUnitLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">m</property>
+          </object>
+          <packing>
+            <property name="left-attach">3</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+      </packing>
+    </child>
+  </object>
+</interface>

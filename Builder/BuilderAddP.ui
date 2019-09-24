@@ -1,0 +1,260 @@
+<interface>
+  <object id="window" class="GtkWindow">
+    <property name="visible">True</property>
+    <property name="border-width">0</property>
+    <property name="resizable">False</property>
+    <child>
+      <object id="grid" class="GtkGrid">
+        <property name="visible">True</property>
+        <property name="column-homogeneous">True</property>
+       	<child>
+          <object id="NameLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Name:</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+      	<child>
+          <object id="NameText" class="GtkTextView">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="width">2</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object id="MassLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Mass:</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+      	<child>
+          <object id="MassText" class="GtkTextView">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object id="MassUnit" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">kg</property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object id="RadiusLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Radius:</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+      	<child>
+          <object id="RadiusText" class="GtkTextView">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object id="RadiusUnit" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">m</property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+        <child>
+          <object id="PosLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Position</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">3</property>
+          </packing>
+        </child>
+        <child>
+          <object id="PosXLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">X:</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">4</property>
+          </packing>
+        </child>
+      	<child>
+          <object id="PosXText" class="GtkTextView">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">4</property>
+          </packing>
+        </child>
+        <child>
+          <object id="PosXUnit" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">m</property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">4</property>
+          </packing>
+        </child>
+        <child>
+          <object id="PosYLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Y:</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">5</property>
+          </packing>
+        </child>
+      	<child>
+          <object id="PosYText" class="GtkTextView">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">5</property>
+          </packing>
+        </child>
+        <child>
+          <object id="PosYUnit" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">m</property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">5</property>
+          </packing>
+        </child>
+        <child>
+          <object id="VelLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Speed</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">6</property>
+          </packing>
+        </child>
+        <child>
+          <object id="VelXLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">X:</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">7</property>
+          </packing>
+        </child>
+      	<child>
+          <object id="VelXText" class="GtkTextView">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">7</property>
+          </packing>
+        </child>
+        <child>
+          <object id="VelXUnit" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">m/s</property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">7</property>
+          </packing>
+        </child>
+        <child>
+          <object id="VelYLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Y:</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">8</property>
+          </packing>
+        </child>
+      	<child>
+          <object id="VelYText" class="GtkTextView">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="top-attach">8</property>
+          </packing>
+        </child>
+        <child>
+          <object id="VelYUnit" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">m/s</property>
+          </object>
+          <packing>
+            <property name="left-attach">2</property>
+            <property name="top-attach">8</property>
+          </packing>
+        </child>
+        <child>
+          <object id="ColorLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Color:</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">9</property>
+          </packing>
+        </child>
+       	<child>
+          <object id="ColorButton" class="GtkColorButton">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">1</property>
+            <property name="width">2</property>
+            <property name="top-attach">9</property>
+          </packing>
+        </child>
+        <child>
+          <object id="NewButton" class="GtkButton">
+            <property name="visible">True</property>
+            <property name="label">Spawn Planet</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="width">3</property>
+            <property name="top-attach">10</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+      </packing>
+    </child>
+  </object>
+</interface>
