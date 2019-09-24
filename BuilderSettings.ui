@@ -1,0 +1,72 @@
+<interface>
+  <object id="window" class="GtkWindow">
+    <property name="visible">True</property>
+    <property name="border-width">0</property>
+    <property name="resizable">False</property>
+    <child>
+      <object id="grid" class="GtkGrid">
+        <property name="visible">True</property>
+        <property name="column-homogeneous">True</property>
+        <child>
+          <object id="TempoLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Time Speed</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">0</property>
+          </packing>
+        </child>
+        <child>
+          <object id="Tempo" class="GtkScale">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">1</property>
+          </packing>
+        </child>
+        <child>
+          <object id="RaggioPianetiLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Planet Radius</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">2</property>
+          </packing>
+        </child>
+       	<child>
+          <object id="RaggioPianeti" class="GtkScale">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">3</property>
+          </packing>
+        </child>
+        <child>
+          <object id="RaggioSoleLabel" class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="label">Sun Radius</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">4</property>
+          </packing>
+        </child>
+        <child>
+          <object id="RaggioSole" class="GtkScale">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="left-attach">0</property>
+            <property name="top-attach">5</property>
+          </packing>
+        </child>
+      </object>
+      <packing>
+      </packing>
+    </child>
+  </object>
+</interface>
