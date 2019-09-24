@@ -36,7 +36,7 @@ GtkTextBuffer *NewPlanetYPositionBuff = gtk_text_buffer_new(NULL);
 GtkTextBuffer *NewPlanetXSpeedBuff = gtk_text_buffer_new(NULL);
 GtkTextBuffer *NewPlanetYSpeedBuff = gtk_text_buffer_new(NULL);
 
-//Nuove Funzioni
+//Funzioni
 static void SU (GtkWidget *, gpointer);
 static void GIU (GtkWidget *, gpointer);
 static void SX (GtkWidget *, gpointer);
@@ -53,12 +53,13 @@ static void NewPlanet (GtkWidget *, gpointer);
 static void Delete(GtkWidget *, gpointer);
 void drawCircol(double, double, double, double, double, double ,double, bool);
 void drawPointer(double, double, double, double, double);
-
 gboolean motore(gpointer);
 void render(int);
 void draw();
-
 std::string doubleToString(double);
+
+//Oggetti
+class Vettore;
 class Pianeta;
 struct Esplosione;
 std::vector<Pianeta> P;//Vector di Pianeti
@@ -66,13 +67,21 @@ std::vector<int> Cestino;//Qui vengono messi i pianeti che vanno distrutti
 std::vector<Esplosione> E;//Qui vengono memorizzate le esplosioni!
 bool sistema_solare = true;//Differenzia Sistema Solare e Modalità Creativa
 
-//Nuove Conversioni
+//Conversioni
 double UTGLX(double x){ //Cordinate to Cordinate OpenGl for x
 	return (x-CCX)/MPUGL;
 }
 double UTGLY(double y){ //Cordinate to Cordinate OpenGl for y
 	return (y-CCY)/MPUGL;
 }
+
+
+
+
+//INIZIO VARIE DEFINIZINIONI CLASSI STRUCT
+
+
+
 
 //Definizione di Vettore
 class Vettore{
@@ -96,13 +105,14 @@ class Vettore{
 	void setY(double yy){
 		y = yy;
 	}
-	void getInfo(){
+	/*void getInfo(){
 		std::cout << "X: " << x << " Y: " << y;
-	}
+	}*/
 	Vettore operator+(Vettore v){
 		return Vettore(x+v.getX(), y+v.getY());
 	}
 };
+
 //Definizine di Pianeta
 class Pianeta{
 	std::string nome;
@@ -116,7 +126,6 @@ class Pianeta{
 	double g;
 	double b;
 	public:
-	//Pianeta(): nome(std::string("casissimo")), massa(0), posizione(Vettore(0,0)), velocita(Vettore(0,0)), color(1){}
 	Pianeta(std::string nome, double massa, double raggio, Vettore posizione, Vettore velocita, int color=1, double r=1, double g=1, double b=1):
 	 nome(nome), massa(massa), raggio(raggio), posizione(posizione), velocita(velocita), r(r), g(g), b(b){
 		accelerazione = Vettore(0,0);
@@ -152,21 +161,21 @@ class Pianeta{
 	Vettore getForza(){
 		return forza;
 	}
-	void getInfo(){
+	/*void getInfo(){
 		std::cout << "Nome: " << nome << "  Massa: " << massa << "  Posizione: ";
 		posizione.getInfo();
 		std::cout << std::flush;
 		std::cout << " Velocita': ";
 		velocita.getInfo();
 		std::cout << std::flush;
-		/*std::cout << " Accellerazione: ";
+		std::cout << " Accellerazione: ";
 		accelerazione.getInfo();
 		std::cout << std::flush;
 		std::cout << " Forza: ";
 		accelerazione.getInfo();
-		std::cout << std::flush;*/
+		std::cout << std::flush;
 		std::cout << std::endl;
-	}
+	}*/
 	void cancForza(){
 		forza.setX(0);
 		forza.setY(0);
@@ -186,6 +195,8 @@ class Pianeta{
 		posizione.setY(posizione.getY() + T*velocita.getY());
 	}
 };
+
+//Definizione Esplosione
 struct Esplosione{
 	Vettore posizione;
 	int vita = 400;
@@ -194,13 +205,22 @@ struct Esplosione{
 		return posizione;
 	}
 };
-double xmin = -200, ymin = -200, xmax = 200, ymax = 200;
+
+
+
+
+//FINE VARIE DEFINIZINIONI CLASSI STRUCT
+
+
 void createFinestraSimulatore(bool ss){
 	int WW = 0, WH = 0;
 	
 	//GdkRectangle workarea = {0};
 	//gdk_monitor_get_workarea(gdk_display_get_primary_monitor(gdk_display_get_default()),&workarea);
-			
+	
+	
+	//OPENGL INIZIALIZZAZIONI
+		
   	glutInitDisplayMode(GLUT_RGB);
   	glutInitWindowSize(WIDTH-436, HEIGHT);
   	glutInitWindowPosition(0, 0);
@@ -208,15 +228,27 @@ void createFinestraSimulatore(bool ss){
   	glutDisplayFunc(draw);
   	glutTimerFunc(25, render, 0);
   	
+  	//-------------------------------
+  	
+  	//DISTACCO DEL MAIN LOOP DI OPENLGL
   	
   	std::thread motoreAutonomo;
   	motoreAutonomo = std::thread(glutMainLoop);
 	motoreAutonomo.detach();
-  
+  	
+  	//-------------------------------
+  	
+  	
+  	//INIZIALIZZAZIONE VARIABILI UTILI AI MENU
+  	
 	GtkBuilder *builder;
 	GError *error = NULL;
 	GtkWidget *window;
 	GtkWidget *button;
+	
+	//-------------------------------
+	
+	//MENU COMANDI
 	
 	builder = gtk_builder_new ();
   	if (gtk_builder_add_from_file (builder, "./Builder/BuilderComandi.ui", &error) == 0){
@@ -252,6 +284,9 @@ void createFinestraSimulatore(bool ss){
   	
   	gtk_widget_show_all (window);
   	
+  	//-------------------------------
+  	
+  	//MENU SETTINGS
   	
 	builder = gtk_builder_new ();
   	if (gtk_builder_add_from_file (builder, "./Builder/BuilderSettings.ui", &error) == 0){
@@ -288,6 +323,10 @@ void createFinestraSimulatore(bool ss){
   	
   	gtk_widget_show_all (window);
 	
+	//-------------------------------
+	
+	//MENU INFOUNIVERSO
+	
 	builder = gtk_builder_new ();
   	if (gtk_builder_add_from_file (builder, "./Builder/BuilderInfoU.ui", &error) == 0){
       g_printerr ("Error loading file: %s\n", error->message);
@@ -305,6 +344,10 @@ void createFinestraSimulatore(bool ss){
 	CCYL = GTK_LABEL(gtk_builder_get_object (builder, "PosyLabel"));
 	
 	gtk_widget_show_all (window);
+	
+	//-------------------------------
+	
+	//MENU INFOPIANETI
 	
 	builder = gtk_builder_new ();
   	if (gtk_builder_add_from_file (builder, "./Builder/BuilderInfoP.ui", &error) == 0){
@@ -333,6 +376,10 @@ void createFinestraSimulatore(bool ss){
 	g_signal_connect (button, "clicked", G_CALLBACK (Delete), NULL);
 	
 	gtk_widget_show_all (window);
+	
+	//-------------------------------
+	
+	//MENU AGGIUNTA PIANETI
 	
 	builder = gtk_builder_new ();
   	if (gtk_builder_add_from_file (builder, "./Builder/BuilderAddP.ui", &error) == 0){
@@ -377,9 +424,15 @@ void createFinestraSimulatore(bool ss){
 
 	gtk_widget_show_all (window);
 	
+	//-------------------------------
+	
+	//TRA QUANTO RICHIAMRE MOTORE IN MICROSECONDI (DOPO L'AVVIO DEL MAIN LOOP DI GTK3
 	g_timeout_add (1, motore, NULL);
-	  	
+	
+	//PRENDO IN INPUT IL TIPO DI MODALITA' RICHIESTO
 	sistema_solare = ss;
+	
+	//INSERICO TUTTI I PIANETI SE E' STATA SCELTA MODALITA' SISTEMA SOLARE
 	if (ss){
 		std::cout << "Aggiungo i pianeti del sistema solare!\n";
 		P.push_back(Pianeta(std::string("Mercurio"), 3.3011e23,2.4397e6, Vettore(4.6e10, 0), Vettore(0, 58.98e3), 1, 0.63, 0.17, 0));
@@ -393,8 +446,15 @@ void createFinestraSimulatore(bool ss){
 	}else{
 		MPUGL = 500;
 	}
+	//INIZIO LOOP GTK3
 	gtk_main();
 }
+
+
+
+//INIZIO VARIE DEFINIZIONI CALL_BACK GTK3
+
+
 void updateCameraPosition(){
 	gtk_label_set_text (CCXL, doubleToString(CCX).c_str());
 	gtk_label_set_text (CCYL, doubleToString(CCY).c_str());
@@ -549,23 +609,36 @@ static void ChangeRaggioPianeti (GtkRange *range, GtkScrollType scroll, gdouble 
 	gtk_range_set_value (range, value);
 	raggioPianeti = value;
 }
+
+//FINE VARIE DEFINIZIONI CALL_BACK
+
+//INIZIO DEFINIZIONE UNICHE 2 CALLBACK di OPENGL
+
+//Chiamata in caso di resize della finestra (esclusivamente opengl)
 void draw(){
 	WP = glutGet(GLUT_WINDOW_WIDTH);
 	HP = glutGet(GLUT_WINDOW_HEIGHT);
 	rapp=WP/HP;
 	render(1);
 }
+
+//Chiamata ogni 25 microsecondi
 void render(int i){
-	glutTimerFunc(25, render, 0);
-	glClearColor(0, 0.025, 0.045, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
+	glutTimerFunc(25, render, 0); //Setta la prossima chiamata della stessa nel opp di OPENGL
+	glClearColor(0, 0.025, 0.045, 1); //Setta il colore di sfondo
+    glClear(GL_COLOR_BUFFER_BIT); //Mette effettivamente il colore di sfondo
+    
     if (sistema_solare){
-    	drawCircol(0, 0, raggioSole, 245, 143, 0, 1, false);
+    	drawCircol(0, 0, raggioSole, 245, 143, 0, 1, false);//Disegna il sole nel caso in cui sia necessario
     }
+    
     for (int c=0; c<static_cast<int>(P.size()); c++){
-    	drawCircol(P[c].getPosizione().getX(), P[c].getPosizione().getY(), raggioPianeti, P[c].getR(), P[c].getG(), P[c].getB(), 1, false);
+    	drawCircol(P[c].getPosizione().getX(), P[c].getPosizione().getY(), raggioPianeti, P[c].getR(), P[c].getG(), P[c].getB(), 1, false);//Disegna tutti i pianeti
    	}
-   	drawPointer(CCX, CCY, 1, 1, 1);
+   	
+   	drawPointer(CCX, CCY, 1, 1, 1);//disegna il Puntatore al Centro dello Schermo
+   	
+    //Controlla se ci sono pianeti da Eliminare
     if (Cestino.size()!=0){
 		if (Cestino[0]<Cestino[1]){
 			P.erase(P.begin()+Cestino[1]);
@@ -576,6 +649,8 @@ void render(int i){
 		}
 		Cestino.erase(Cestino.begin());Cestino.erase(Cestino.begin());
 	}
+	
+	//Controlla se ci sono esplosioni da mostrare!
 	for (int e=0; e<static_cast<int>(E.size()); e++){
 		double raggio;
 		raggio = 0.1-0.1/E[e].vita;
@@ -586,19 +661,22 @@ void render(int i){
 			e--;
 		}
 	}
-	glutSwapBuffers();
-    //return TRUE;
-    //P[1].getInfo();
+	glutSwapBuffers();	//Mostra nella finestra ciò che si è disegnato!
 }
+
+
+//FINE DEFINIZIONI CALL_BACK OPENGL
+
+//FUNZIONE CHE FA TUTTI I CONTI
 gboolean motore(gpointer user_data){
 	g_timeout_add (1, motore, NULL);
 	double r;
 	if (!stop){
 		for (int c=0; c<static_cast<int>(P.size()); c++){
 			//Calcolo della forza con il SOLE!
-			r = sqrt(pow(P[c].getPosizione().getX(),2) + pow(P[c].getPosizione().getY(),2));
 			P[c].cancForza();
 			if (sistema_solare){
+				r = sqrt(pow(P[c].getPosizione().getX(),2) + pow(P[c].getPosizione().getY(),2));
 				P[c].addForza((G*M*P[c].getMassa())/(r*r*r));
 			}
 			//Calcolo della forza con gli altri corpi!
@@ -621,6 +699,8 @@ gboolean motore(gpointer user_data){
 	}
 	return false;
 }
+
+// FUNZIONE CHE DISEGNA UN CERCHIO
 void drawCircol(double Ux, double Uy, double Ur, double r, double g, double b, double a, bool rvero){
 	double ang = 0;
 	if (rvero){
@@ -636,6 +716,7 @@ void drawCircol(double Ux, double Uy, double Ur, double r, double g, double b, d
         ang+=0.1;
 	}
 }
+// FUNZIONE CHE DISEGNA IL PUNTATORE
 void drawPointer(double Ux, double Uy, double r, double g, double b){
 	glColor4f(r, g, b, 1);
 	glBegin(GL_TRIANGLES);
@@ -653,8 +734,14 @@ void drawPointer(double Ux, double Uy, double r, double g, double b){
                 glVertex2f(UTGLX(Ux)+0.02, UTGLY(Uy)-0.01);
     glEnd();
 }
+//FUNZIONE CHE CONVERTE DOUBLE IN STRINGHE
 std::string doubleToString(double dd){
 	std::stringstream ss("");
 	ss << dd;
 	return ss.str();
 }
+
+//MADE by NOCE
+//Inizio sviluppo programma: Venerdì 3 Maggio 2019
+//Ultima Modifica: 24/09/2019
+//Commenti scritti il 24/09/2019
