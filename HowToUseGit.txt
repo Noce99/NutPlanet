@@ -1,0 +1,12 @@
+Tutorial Git:
+echo "# Test" >> README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/Noce99/Test.git
+git push -u origin master
+
+
+Usate Dopo:
+git commit -m "Nome del Commit"
+git push -u origin master

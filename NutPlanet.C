@@ -1,28 +1,10 @@
-#include <iostream>
-#include <unistd.h>
 #include "NutPlanet.h"
-#include <cmath>
-#include <passe_par_tout.h>
-#include <string>
-#include <vector>
-#include <stdlib.h>
-#include <thread>
-#include <sstream>
-#include <unistd.h>
-
-//Nuovi Include
-#include <cairo.h>
-#include <gtk/gtk.h>
-#include <gdk/gdk.h>
-#include <gio/gio.h>
-#include "GL/freeglut.h"
-#include "GL/gl.h"
 
 //Costanti
-constexpr double G = 6.67408e-11;//Costante Gravitazionale
-double T = 1000;//Delta T ad Ogni Tick
-constexpr double M = 1.989e30;//Massa Sole
-bool stop = false;//Fa ferare il simulatore se TRUE
+constexpr double G = 6.67408e-11; //Costante Gravitazionale
+double T = 1000; //Delta T ad Ogni Tick
+constexpr double M = 1.989e30; //Massa Sole
+bool stop = false; //Fa ferare il simulatore se TRUE
 double WIDTH = 1366, HEIGHT = 768;
 
 
@@ -38,6 +20,7 @@ double raggioPianeti = 0.01;
 
 int selected = -1;
 
+//Vari campi il cui accesso è necessario da tutto il programma
 GtkLabel *CCXL;
 GtkLabel *CCYL;
 GtkLabel *PlanetInfoName;
@@ -52,8 +35,8 @@ GtkTextBuffer *NewPlanetXPositionBuff = gtk_text_buffer_new(NULL);
 GtkTextBuffer *NewPlanetYPositionBuff = gtk_text_buffer_new(NULL);
 GtkTextBuffer *NewPlanetXSpeedBuff = gtk_text_buffer_new(NULL);
 GtkTextBuffer *NewPlanetYSpeedBuff = gtk_text_buffer_new(NULL);
+
 //Nuove Funzioni
-static gboolean draw(GtkWidget *, cairo_t *, gpointer);
 static void SU (GtkWidget *, gpointer);
 static void GIU (GtkWidget *, gpointer);
 static void SX (GtkWidget *, gpointer);
@@ -69,19 +52,18 @@ static void Next (GtkWidget *, gpointer);
 static void NewPlanet (GtkWidget *, gpointer);
 static void Delete(GtkWidget *, gpointer);
 void drawCircol(double, double, double, double, double, double ,double, bool);
-void MouseListener(int, int, int, int);
 void drawPointer(double, double, double, double, double);
 
 gboolean motore(gpointer);
 void render(int);
 void draw();
 
-string doubleToString(double);
+std::string doubleToString(double);
 class Pianeta;
 struct Esplosione;
-vector<Pianeta> P;//Vector di Pianeti
-vector<int> Cestino;//Qui vengono messi i pianeti che vanno distrutti
-vector<Esplosione> E;//Qui vengono memorizzate le esplosioni!
+std::vector<Pianeta> P;//Vector di Pianeti
+std::vector<int> Cestino;//Qui vengono messi i pianeti che vanno distrutti
+std::vector<Esplosione> E;//Qui vengono memorizzate le esplosioni!
 bool sistema_solare = true;//Differenzia Sistema Solare e Modalità Creativa
 
 //Nuove Conversioni
@@ -115,7 +97,7 @@ class Vettore{
 		y = yy;
 	}
 	void getInfo(){
-		cout << "X: " << x << " Y: " << y;
+		std::cout << "X: " << x << " Y: " << y;
 	}
 	Vettore operator+(Vettore v){
 		return Vettore(x+v.getX(), y+v.getY());
@@ -123,7 +105,7 @@ class Vettore{
 };
 //Definizine di Pianeta
 class Pianeta{
-	string nome;
+	std::string nome;
 	double massa;
 	double raggio;
 	Vettore posizione;
@@ -134,13 +116,13 @@ class Pianeta{
 	double g;
 	double b;
 	public:
-	//Pianeta(): nome(string("casissimo")), massa(0), posizione(Vettore(0,0)), velocita(Vettore(0,0)), color(1){}
-	Pianeta(string nome, double massa, double raggio, Vettore posizione, Vettore velocita, int color=1, double r=1, double g=1, double b=1):
+	//Pianeta(): nome(std::string("casissimo")), massa(0), posizione(Vettore(0,0)), velocita(Vettore(0,0)), color(1){}
+	Pianeta(std::string nome, double massa, double raggio, Vettore posizione, Vettore velocita, int color=1, double r=1, double g=1, double b=1):
 	 nome(nome), massa(massa), raggio(raggio), posizione(posizione), velocita(velocita), r(r), g(g), b(b){
 		accelerazione = Vettore(0,0);
 		forza = Vettore(0,0);
 	}
-	string getNome(){
+	std::string getNome(){
 		return nome;
 	}
 	double getMassa(){
@@ -171,19 +153,19 @@ class Pianeta{
 		return forza;
 	}
 	void getInfo(){
-		cout << "Nome: " << nome << "  Massa: " << massa << "  Posizione: ";
+		std::cout << "Nome: " << nome << "  Massa: " << massa << "  Posizione: ";
 		posizione.getInfo();
-		cout << flush;
-		cout << " Velocita': ";
+		std::cout << std::flush;
+		std::cout << " Velocita': ";
 		velocita.getInfo();
-		cout << flush;
-		/*cout << " Accellerazione: ";
+		std::cout << std::flush;
+		/*std::cout << " Accellerazione: ";
 		accelerazione.getInfo();
-		cout << flush;
-		cout << " Forza: ";
+		std::cout << std::flush;
+		std::cout << " Forza: ";
 		accelerazione.getInfo();
-		cout << flush;*/
-		cout << endl;
+		std::cout << std::flush;*/
+		std::cout << std::endl;
 	}
 	void cancForza(){
 		forza.setX(0);
@@ -223,13 +205,12 @@ void createFinestraSimulatore(bool ss){
   	glutInitWindowSize(WIDTH-436, HEIGHT);
   	glutInitWindowPosition(0, 0);
   	glutCreateWindow("Nut Planet");
-  	glutMouseFunc(MouseListener);
   	glutDisplayFunc(draw);
   	glutTimerFunc(25, render, 0);
   	
   	
-  	thread motoreAutonomo;
-  	motoreAutonomo = thread(glutMainLoop);
+  	std::thread motoreAutonomo;
+  	motoreAutonomo = std::thread(glutMainLoop);
 	motoreAutonomo.detach();
   
 	GtkBuilder *builder;
@@ -400,15 +381,15 @@ void createFinestraSimulatore(bool ss){
 	  	
 	sistema_solare = ss;
 	if (ss){
-		cout << "Aggiungo i pianeti del sistema solare!\n";
-		P.push_back(Pianeta(String("Mercurio"), 3.3011e23,2.4397e6, Vettore(4.6e10, 0), Vettore(0, 58.98e3), 1, 0.63, 0.17, 0));
-		P.push_back(Pianeta(String("Venere"), 4.8675e24,6.0518e6, Vettore(1.0748e11, 0), Vettore(0, 35.26e3), 1, 0.4, 0.17, 0));
-	  	P.push_back(Pianeta(String("Terra"), 5.972e24,6.378137e6, Vettore(1.496e11, 0), Vettore(0, 30e3), 1, 0, 0.36, 0.4));
-		P.push_back(Pianeta(String("Marte"), 6.4185e23,3.40245e6, Vettore(2.06644545e11, 0), Vettore(0, 26.499e3), 1, 0.7, 0.09, 0.03));
-		P.push_back(Pianeta(String("Giove"), 1.89819e27,7.1492e7, Vettore(7.40742598e11, 0), Vettore(0, 13.712e3), 1, 0.75, 0.75, 0.29));
-		P.push_back(Pianeta(String("Saturno"), 5.6834e26,6.0268e7, Vettore(13.52550e11, 0), Vettore(0, 10.18e3), 1, 0.75, 0.75, 0.29));
-		P.push_back(Pianeta(String("Urano"), 86.813e24,2.5559e7, Vettore(27.413e11, 0), Vettore(0, 7.11e3), 0.05, 1, 0.78, 0.76));
-		P.push_back(Pianeta(String("Nettuno"), 1.0243e26,2.4764e7, Vettore(44.59631496e11, 0), Vettore(0, 5.479e3), 1, 0.01, 0.31, 0.3));
+		std::cout << "Aggiungo i pianeti del sistema solare!\n";
+		P.push_back(Pianeta(std::string("Mercurio"), 3.3011e23,2.4397e6, Vettore(4.6e10, 0), Vettore(0, 58.98e3), 1, 0.63, 0.17, 0));
+		P.push_back(Pianeta(std::string("Venere"), 4.8675e24,6.0518e6, Vettore(1.0748e11, 0), Vettore(0, 35.26e3), 1, 0.4, 0.17, 0));
+	  	P.push_back(Pianeta(std::string("Terra"), 5.972e24,6.378137e6, Vettore(1.496e11, 0), Vettore(0, 30e3), 1, 0, 0.36, 0.4));
+		P.push_back(Pianeta(std::string("Marte"), 6.4185e23,3.40245e6, Vettore(2.06644545e11, 0), Vettore(0, 26.499e3), 1, 0.7, 0.09, 0.03));
+		P.push_back(Pianeta(std::string("Giove"), 1.89819e27,7.1492e7, Vettore(7.40742598e11, 0), Vettore(0, 13.712e3), 1, 0.75, 0.75, 0.29));
+		P.push_back(Pianeta(std::string("Saturno"), 5.6834e26,6.0268e7, Vettore(13.52550e11, 0), Vettore(0, 10.18e3), 1, 0.75, 0.75, 0.29));
+		P.push_back(Pianeta(std::string("Urano"), 86.813e24,2.5559e7, Vettore(27.413e11, 0), Vettore(0, 7.11e3), 0.05, 1, 0.78, 0.76));
+		P.push_back(Pianeta(std::string("Nettuno"), 1.0243e26,2.4764e7, Vettore(44.59631496e11, 0), Vettore(0, 5.479e3), 1, 0.01, 0.31, 0.3));
 	}else{
 		MPUGL = 500;
 	}
@@ -450,8 +431,8 @@ static void Home (GtkWidget *widget, gpointer   data){
 	updateCameraPosition();
 }
 static void Previus (GtkWidget *widget, gpointer   data){
-	if (P.size()!=0){
-		if (selected!=0){
+	if (static_cast<int>(P.size())!=0){
+		if (selected != 0 && selected != -1){
 			selected--;
 		}else{
 			selected = P.size()-1;
@@ -470,7 +451,7 @@ static void Previus (GtkWidget *widget, gpointer   data){
 }
 static void Next (GtkWidget *widget, gpointer   data){
 	if (P.size()!=0){
-		if (selected!=P.size()-1){
+		if (selected!=static_cast<int>(P.size())-1){
 			selected++;
 		}else{
 			selected = 0;
@@ -491,46 +472,47 @@ static void Delete (GtkWidget *widget, gpointer data){
 	if ((P.size()!=0)&&(selected!=-1)){
 		P.erase(P.begin()+selected);
 		selected--;
+		Next(NULL, NULL);
 	}
 }
 static void NewPlanet (GtkWidget *widget, gpointer   data){
-	String name;
-	stringstream ss("");
+	std::string name;
+	std::stringstream ss("");
 	double radius, mass, xpos, ypos, xspeed, yspeed;
 	GdkRGBA rgba;
 	GtkTextIter start, end;
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetNameBuff,&start, 0);
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetNameBuff,&end, -1);
-	name = String(gtk_text_buffer_get_text (NewPlanetNameBuff, &start, &end, false));
+	name = std::string(gtk_text_buffer_get_text (NewPlanetNameBuff, &start, &end, false));
 	
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetMassBuff,&start, 0);
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetMassBuff,&end, -1);
-	ss = stringstream(gtk_text_buffer_get_text (NewPlanetMassBuff, &start, &end, false));
+	ss = std::stringstream(gtk_text_buffer_get_text (NewPlanetMassBuff, &start, &end, false));
 	ss >> mass;
 	
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetRadiusBuff,&start, 0);
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetRadiusBuff,&end, -1);
-	ss = stringstream(gtk_text_buffer_get_text (NewPlanetRadiusBuff, &start, &end, false));
+	ss = std::stringstream(gtk_text_buffer_get_text (NewPlanetRadiusBuff, &start, &end, false));
 	ss >> radius;
 	
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetXPositionBuff,&start, 0);
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetXPositionBuff,&end, -1);
-	ss = stringstream(gtk_text_buffer_get_text (NewPlanetXPositionBuff, &start, &end, false));
+	ss = std::stringstream(gtk_text_buffer_get_text (NewPlanetXPositionBuff, &start, &end, false));
 	ss >> xpos;
 	
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetYPositionBuff,&start, 0);
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetYPositionBuff,&end, -1);
-	ss = stringstream(gtk_text_buffer_get_text (NewPlanetYPositionBuff, &start, &end, false));
+	ss = std::stringstream(gtk_text_buffer_get_text (NewPlanetYPositionBuff, &start, &end, false));
 	ss >> ypos;
 	
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetXSpeedBuff,&start, 0);
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetXSpeedBuff,&end, -1);
-	ss = stringstream(gtk_text_buffer_get_text (NewPlanetXSpeedBuff, &start, &end, false));
+	ss = std::stringstream(gtk_text_buffer_get_text (NewPlanetXSpeedBuff, &start, &end, false));
 	ss >> xspeed;
 	
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetYSpeedBuff,&start, 0);
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetYSpeedBuff,&end, -1);
-	ss = stringstream(gtk_text_buffer_get_text (NewPlanetYSpeedBuff, &start, &end, false));
+	ss = std::stringstream(gtk_text_buffer_get_text (NewPlanetYSpeedBuff, &start, &end, false));
 	ss >> yspeed;
 
 	gtk_color_chooser_get_rgba (GTK_COLOR_CHOOSER(NewPlanetColor), &rgba);
@@ -580,7 +562,7 @@ void render(int i){
     if (sistema_solare){
     	drawCircol(0, 0, raggioSole, 245, 143, 0, 1, false);
     }
-    for (int c=0; c<P.size(); c++){
+    for (int c=0; c<static_cast<int>(P.size()); c++){
     	drawCircol(P[c].getPosizione().getX(), P[c].getPosizione().getY(), raggioPianeti, P[c].getR(), P[c].getG(), P[c].getB(), 1, false);
    	}
    	drawPointer(CCX, CCY, 1, 1, 1);
@@ -594,7 +576,7 @@ void render(int i){
 		}
 		Cestino.erase(Cestino.begin());Cestino.erase(Cestino.begin());
 	}
-	for (int e=0; e<E.size(); e++){
+	for (int e=0; e<static_cast<int>(E.size()); e++){
 		double raggio;
 		raggio = 0.1-0.1/E[e].vita;
 		drawCircol(E[e].getPosizione().getX(), E[e].getPosizione().getY(), raggio, 1, 0, 0, 1, false);
@@ -612,7 +594,7 @@ gboolean motore(gpointer user_data){
 	g_timeout_add (1, motore, NULL);
 	double r;
 	if (!stop){
-		for (int c=0; c<P.size(); c++){
+		for (int c=0; c<static_cast<int>(P.size()); c++){
 			//Calcolo della forza con il SOLE!
 			r = sqrt(pow(P[c].getPosizione().getX(),2) + pow(P[c].getPosizione().getY(),2));
 			P[c].cancForza();
@@ -620,7 +602,7 @@ gboolean motore(gpointer user_data){
 				P[c].addForza((G*M*P[c].getMassa())/(r*r*r));
 			}
 			//Calcolo della forza con gli altri corpi!
-				for (int cc=0; cc<P.size(); cc++){
+				for (int cc=0; cc<static_cast<int>(P.size()); cc++){
 					if (cc!=c){
 						r = sqrt(pow(P[c].getPosizione().getX()-P[cc].getPosizione().getX(),2) + pow(P[c].getPosizione().getY()-P[cc].getPosizione().getY(),2));
 						if (r<(P[c].getRaggio()+P[cc].getRaggio())){
@@ -671,14 +653,8 @@ void drawPointer(double Ux, double Uy, double r, double g, double b){
                 glVertex2f(UTGLX(Ux)+0.02, UTGLY(Uy)-0.01);
     glEnd();
 }
-void MouseListener(int button, int state, int x, int y){
-	double xxx = (x-(WP/2))/(WP/2);
-	double yyy = (-(y-(HP/2)))/(HP/2);
-	double distance, xx, yy;
-	//cout << "button = \"" << button << "\" state = \"" << state << "\" (" << (x-(WP/2))/(WP/2) << ", " << (-(y-(HP/2)))/(HP/2) << ")\n";
-}
-string doubleToString(double dd){
-	stringstream ss("");
+std::string doubleToString(double dd){
+	std::stringstream ss("");
 	ss << dd;
 	return ss.str();
 }
