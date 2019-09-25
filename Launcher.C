@@ -53,7 +53,7 @@ void MenuGenerale (){
     }
     
   	window = GTK_WIDGET(gtk_builder_get_object (builder, "window"));
-  	//gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+  	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
   	gtk_window_set_title(GTK_WINDOW(window), "Nut Planet");  	
   	g_signal_connect(window, "destroy", G_CALLBACK(Quit), NULL);
   	

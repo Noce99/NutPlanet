@@ -15,8 +15,8 @@ double MPUGL = 44.59631496e11; //Metri per Unità GL
 double WP = 0; //Larghezza in Pixel
 double HP = 0; //Altezza in Pixel
 double rapp = 1;
-double raggioSole = 0.02;
-double raggioPianeti = 0.01;
+double raggioSole = 0.005;
+double raggioPianeti = 0.001;
 
 int selected = -1;
 
@@ -52,7 +52,7 @@ static void Next (GtkWidget *, gpointer);
 static void NewPlanet (GtkWidget *, gpointer);
 static void Delete(GtkWidget *, gpointer);
 void drawCircol(double, double, double, double, double, double ,double, bool);
-void drawPointer(double, double, double, double, double);
+void drawPointer(double, double, double, double, double, double);
 gboolean motore(gpointer);
 void render(int);
 void draw();
@@ -222,7 +222,7 @@ void createFinestraSimulatore(bool ss){
 	//OPENGL INIZIALIZZAZIONI
 		
   	glutInitDisplayMode(GLUT_RGB);
-  	glutInitWindowSize(WIDTH-436, HEIGHT);
+  	glutInitWindowSize(WIDTH, HEIGHT);
   	glutInitWindowPosition(0, 0);
   	glutCreateWindow("Nut Planet");
   	glutDisplayFunc(draw);
@@ -308,18 +308,20 @@ void createFinestraSimulatore(bool ss){
   	g_signal_connect (scale, "change-value", G_CALLBACK (ChangeTime), NULL);
   	
   	scale = GTK_SCALE(gtk_builder_get_object (builder, "RaggioPianeti"));
-  	gtk_range_set_range (GTK_RANGE(scale), 0.005, 0.2);
+  	gtk_range_set_range (GTK_RANGE(scale), 0.001, 0.010);
   	gtk_widget_set_size_request (GTK_WIDGET(scale), 436, 3);
   	gtk_range_set_round_digits (GTK_RANGE(scale), 10);
   	gtk_scale_set_draw_value (scale,false);
   	g_signal_connect (scale, "change-value", G_CALLBACK (ChangeRaggioPianeti), NULL);
+  	ChangeRaggioPianeti(GTK_RANGE(scale), GTK_SCROLL_NONE, 0.005, NULL);
   	
   	scale = GTK_SCALE(gtk_builder_get_object (builder, "RaggioSole"));
   	gtk_range_set_round_digits (GTK_RANGE(scale), 10);
-  	gtk_range_set_range (GTK_RANGE(scale), 0.01, 0.4);
+  	gtk_range_set_range (GTK_RANGE(scale), 0.005, 0.050);
   	gtk_widget_set_size_request (GTK_WIDGET(scale), 436, 3);
   	gtk_scale_set_draw_value (scale,false);
   	g_signal_connect (scale, "change-value", G_CALLBACK (ChangeRaggioSole), NULL);
+  	ChangeRaggioSole(GTK_RANGE(scale), GTK_SCROLL_NONE, 0.015, NULL);
   	
   	gtk_widget_show_all (window);
 	
@@ -590,21 +592,21 @@ static void ChangeTime (GtkRange *range, GtkScrollType scroll, gdouble value, gp
 	T = value;
 }
 static void ChangeRaggioSole (GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data){
-	if (value>0.4){
-		value = 0.4;
+	if (value>0.05){
+		value = 0.05;
 	}
-	if (value<0.01){
-		value = 0.01;
+	if (value<0.005){
+		value = 0.005;
 	}
 	gtk_range_set_value (range, value);
 	raggioSole = value;
 }
 static void ChangeRaggioPianeti (GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data){
-	if (value>0.2){
-		value = 0.2;
+	if (value>0.01){
+		value = 0.01;
 	}
-	if (value<0.005){
-		value = 0.005;
+	if (value<0.001){
+		value = 0.001;
 	}
 	gtk_range_set_value (range, value);
 	raggioPianeti = value;
@@ -636,7 +638,7 @@ void render(int i){
     	drawCircol(P[c].getPosizione().getX(), P[c].getPosizione().getY(), raggioPianeti, P[c].getR(), P[c].getG(), P[c].getB(), 1, false);//Disegna tutti i pianeti
    	}
    	
-   	drawPointer(CCX, CCY, 1, 1, 1);//disegna il Puntatore al Centro dello Schermo
+   	drawPointer(CCX, CCY, 0, 0.92, 0.84, 1);//disegna il Puntatore al Centro dello Schermo
    	
     //Controlla se ci sono pianeti da Eliminare
     if (Cestino.size()!=0){
@@ -717,21 +719,21 @@ void drawCircol(double Ux, double Uy, double Ur, double r, double g, double b, d
 	}
 }
 // FUNZIONE CHE DISEGNA IL PUNTATORE
-void drawPointer(double Ux, double Uy, double r, double g, double b){
+void drawPointer(double Ux, double Uy, double r, double g, double b, double scale){
 	glColor4f(r, g, b, 1);
 	glBegin(GL_TRIANGLES);
                 glVertex2f(UTGLX(Ux), UTGLY(Uy));
-                glVertex2f(UTGLX(Ux)-0.01, UTGLY(Uy)+0.02);
-                glVertex2f(UTGLX(Ux)+0.01, UTGLY(Uy)+0.02);
+                glVertex2f(UTGLX(Ux)-0.005*scale, UTGLY(Uy)+0.01*scale);
+                glVertex2f(UTGLX(Ux)+0.005*scale, UTGLY(Uy)+0.01*scale);
                 glVertex2f(UTGLX(Ux), UTGLY(Uy));
-                glVertex2f(UTGLX(Ux)-0.02, UTGLY(Uy)+0.01);
-                glVertex2f(UTGLX(Ux)-0.02, UTGLY(Uy)-0.01);
+                glVertex2f(UTGLX(Ux)-0.01*scale, UTGLY(Uy)+0.005*scale);
+                glVertex2f(UTGLX(Ux)-0.01*scale, UTGLY(Uy)-0.005*scale);
                 glVertex2f(UTGLX(Ux), UTGLY(Uy));
-                glVertex2f(UTGLX(Ux)-0.01, UTGLY(Uy)-0.02);
-                glVertex2f(UTGLX(Ux)+0.01, UTGLY(Uy)-0.02);
+                glVertex2f(UTGLX(Ux)-0.005*scale, UTGLY(Uy)-0.01*scale);
+                glVertex2f(UTGLX(Ux)+0.005*scale, UTGLY(Uy)-0.01*scale);
                 glVertex2f(UTGLX(Ux), UTGLY(Uy));
-                glVertex2f(UTGLX(Ux)+0.02, UTGLY(Uy)+0.01);
-                glVertex2f(UTGLX(Ux)+0.02, UTGLY(Uy)-0.01);
+                glVertex2f(UTGLX(Ux)+0.01*scale, UTGLY(Uy)+0.005*scale);
+                glVertex2f(UTGLX(Ux)+0.01*scale, UTGLY(Uy)-0.005*scale);
     glEnd();
 }
 //FUNZIONE CHE CONVERTE DOUBLE IN STRINGHE
@@ -743,5 +745,5 @@ std::string doubleToString(double dd){
 
 //MADE by NOCE
 //Inizio sviluppo programma: Venerdì 3 Maggio 2019
-//Ultima Modifica: 24/09/2019
+//Ultima Modifica: 25/09/2019
 //Commenti scritti il 24/09/2019
