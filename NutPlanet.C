@@ -437,18 +437,15 @@ void NewPlanet (GtkWidget *widget, gpointer   data){
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetXPositionBuff,&end, -1);
 	ss = std::stringstream(gtk_text_buffer_get_text (NewPlanetXPositionBuff, &start, &end, false));
 	ss >> xpos;
-	if (abs(xpos)<RS && sistema_solare){
-		std::cout << "!!! Troppo vicino al Sole! Te lo Sposto!" << std::endl;
-		xpos = RS*1000;
-	}
 	
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetYPositionBuff,&start, 0);
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetYPositionBuff,&end, -1);
 	ss = std::stringstream(gtk_text_buffer_get_text (NewPlanetYPositionBuff, &start, &end, false));
 	ss >> ypos;
-	if (abs(ypos)<RS && sistema_solare){
+	if (sqrt(xpos*xpos+ypos*ypos)<RS && sistema_solare){
 		std::cout << "!!! Troppo vicino al Sole! Te lo Sposto!" << std::endl;
 		ypos = RS*1000;
+		xpos = RS*1000;
 	}
 	
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetXSpeedBuff,&start, 0);
