@@ -4,11 +4,11 @@
 constexpr double G = 6.67408e-11; //Costante Gravitazionale
 double T = 1000; //Delta T ad Ogni Tick
 constexpr double M = 1.989e30; //Massa Sole
+constexpr double RS = 695510000; //Raggio Sole
 bool stop = false; //Fa ferare il simulatore se TRUE
 double WIDTH = 1366, HEIGHT = 768;
 
-
-//Nuove Variabili Posizione
+//Variabili Posizione
 double CCX = 0; //Camera Centro X
 double CCY = 0; //Camera Centro Y
 double MPUGL = 44.59631496e11; //Metri per Unità GL
@@ -37,182 +37,45 @@ GtkTextBuffer *NewPlanetXSpeedBuff = gtk_text_buffer_new(NULL);
 GtkTextBuffer *NewPlanetYSpeedBuff = gtk_text_buffer_new(NULL);
 
 //Funzioni
-static void SU (GtkWidget *, gpointer);
-static void GIU (GtkWidget *, gpointer);
-static void SX (GtkWidget *, gpointer);
-static void DX (GtkWidget *, gpointer);
-static void Home (GtkWidget *, gpointer);
-static void ZP (GtkWidget *, gpointer);
-static void ZM (GtkWidget *, gpointer);
-static void ChangeTime (GtkRange *, GtkScrollType, gdouble, gpointer);
-static void ChangeRaggioPianeti (GtkRange *, GtkScrollType, gdouble, gpointer);
-static void ChangeRaggioSole (GtkRange *, GtkScrollType, gdouble, gpointer);
-static void Previus (GtkWidget *, gpointer);
-static void Next (GtkWidget *, gpointer);
-static void NewPlanet (GtkWidget *, gpointer);
-static void Delete(GtkWidget *, gpointer);
-void drawCircol(double, double, double, double, double, double ,double, bool);
-void drawPointer(double, double, double, double, double, double);
+void SU (GtkWidget *, gpointer);
+void GIU (GtkWidget *, gpointer);
+void SX (GtkWidget *, gpointer);
+void DX (GtkWidget *, gpointer);
+void Home (GtkWidget *, gpointer);
+void ZP (GtkWidget *, gpointer);
+void ZM (GtkWidget *, gpointer);
+void ChangeTime (GtkRange *, GtkScrollType, gdouble, gpointer);
+void ChangeRaggioPianeti (GtkRange *, GtkScrollType, gdouble, gpointer);
+void ChangeRaggioSole (GtkRange *, GtkScrollType, gdouble, gpointer);
+void Previus (GtkWidget *, gpointer);
+void Next (GtkWidget *, gpointer);
+void NewPlanet (GtkWidget *, gpointer);
+void Delete(GtkWidget *, gpointer);
+void drawCircol(double const&, double const&, double , double const&, double const&, double const&, double const&, bool const&);
+void drawPointer(double const&, double const&, double const&, double const&, double const&, double const&);
 gboolean motore(gpointer);
 void render(int);
 void draw();
-std::string doubleToString(double);
+std::string doubleToString(double const&);
 
 //Oggetti
-class Vettore;
-class Pianeta;
-struct Esplosione;
 std::vector<Pianeta> P;//Vector di Pianeti
 std::vector<int> Cestino;//Qui vengono messi i pianeti che vanno distrutti
 std::vector<Esplosione> E;//Qui vengono memorizzate le esplosioni!
 bool sistema_solare = true;//Differenzia Sistema Solare e Modalità Creativa
 
 //Conversioni
-double UTGLX(double x){ //Cordinate to Cordinate OpenGl for x
+double UTGLX(double const & x){ //Cordinate to Cordinate OpenGl for x
 	return (x-CCX)/MPUGL;
 }
-double UTGLY(double y){ //Cordinate to Cordinate OpenGl for y
+double UTGLY(double const & y){ //Cordinate to Cordinate OpenGl for y
 	return (y-CCY)/MPUGL;
 }
-
-
-
-
-//INIZIO VARIE DEFINIZINIONI CLASSI STRUCT
-
-
-
-
-//Definizione di Vettore
-class Vettore{
-	double x;
-	double y;
-	public:
-	Vettore(double x, double y): x(x), y(y){}
-	Vettore(){
-		x = 0;
-		y = 0;
-	}
-	double getX(){
-		return x;
-	}
-	double getY(){
-		return y;
-	}
-	void setX(double xx){
-		x = xx;
-	}
-	void setY(double yy){
-		y = yy;
-	}
-	/*void getInfo(){
-		std::cout << "X: " << x << " Y: " << y;
-	}*/
-	Vettore operator+(Vettore v){
-		return Vettore(x+v.getX(), y+v.getY());
-	}
-};
-
-//Definizine di Pianeta
-class Pianeta{
-	std::string nome;
-	double massa;
-	double raggio;
-	Vettore posizione;
-	Vettore velocita;
-	Vettore accelerazione;
-	Vettore forza;
-	double r;
-	double g;
-	double b;
-	public:
-	Pianeta(std::string nome, double massa, double raggio, Vettore posizione, Vettore velocita, int color=1, double r=1, double g=1, double b=1):
-	 nome(nome), massa(massa), raggio(raggio), posizione(posizione), velocita(velocita), r(r), g(g), b(b){
-		accelerazione = Vettore(0,0);
-		forza = Vettore(0,0);
-	}
-	std::string getNome(){
-		return nome;
-	}
-	double getMassa(){
-		return massa;
-	}
-	double getRaggio(){
-		return raggio;
-	}
-	Vettore getPosizione(){
-		return posizione;
-	}
-	Vettore getVelocita(){
-		return velocita;
-	}
-	Vettore getAccelerazione(){
-		return accelerazione;
-	}
-	double getR(){
-		return r;
-	}
-	double getG(){
-		return g;
-	}
-	double getB(){
-		return b;
-	}
-	Vettore getForza(){
-		return forza;
-	}
-	/*void getInfo(){
-		std::cout << "Nome: " << nome << "  Massa: " << massa << "  Posizione: ";
-		posizione.getInfo();
-		std::cout << std::flush;
-		std::cout << " Velocita': ";
-		velocita.getInfo();
-		std::cout << std::flush;
-		std::cout << " Accellerazione: ";
-		accelerazione.getInfo();
-		std::cout << std::flush;
-		std::cout << " Forza: ";
-		accelerazione.getInfo();
-		std::cout << std::flush;
-		std::cout << std::endl;
-	}*/
-	void cancForza(){
-		forza.setX(0);
-		forza.setY(0);
-	}
-	Vettore temp = Vettore(0,0);
-	void addForza(double f, Vettore v=Vettore(0,0)){
-		temp.setX(f*(posizione.getX()-v.getX()));
-		temp.setY(f*(posizione.getY()-v.getY()));
-		forza=forza+temp;
-	}
-	void calcDati(){
-		accelerazione.setX(-forza.getX()/massa);
-		accelerazione.setY(-forza.getY()/massa);
-		velocita.setX(velocita.getX() + T*accelerazione.getX());
-		velocita.setY(velocita.getY() + T*accelerazione.getY());
-		posizione.setX(posizione.getX() + T*velocita.getX());
-		posizione.setY(posizione.getY() + T*velocita.getY());
-	}
-};
-
-//Definizione Esplosione
-struct Esplosione{
-	Vettore posizione;
-	int vita = 400;
-	Esplosione(Vettore posizione):posizione(posizione){}
-	Vettore getPosizione(){
-		return posizione;
-	}
-};
-
-
-
 
 //FINE VARIE DEFINIZINIONI CLASSI STRUCT
 
 
-void createFinestraSimulatore(bool ss){
+void createFinestraSimulatore(bool const & ss){
 	int WW = 0, WH = 0;
 	
 	//GdkRectangle workarea = {0};
@@ -400,25 +263,32 @@ void createFinestraSimulatore(bool ss){
 	
 	textview = GTK_WIDGET(gtk_builder_get_object (builder, "NameText"));
 	gtk_text_view_set_buffer (GTK_TEXT_VIEW(textview), NewPlanetNameBuff);
+	gtk_text_buffer_set_text (NewPlanetNameBuff, "NoName", 6);
 	
 	textview = GTK_WIDGET(gtk_builder_get_object (builder, "MassText"));
 	gtk_text_view_set_buffer (GTK_TEXT_VIEW(textview), NewPlanetMassBuff);
+	gtk_text_buffer_set_text (NewPlanetMassBuff, "1", 1);
 	
 	textview = GTK_WIDGET(gtk_builder_get_object (builder, "RadiusText"));
 	gtk_text_view_set_buffer (GTK_TEXT_VIEW(textview), NewPlanetRadiusBuff);
+	gtk_text_buffer_set_text (NewPlanetRadiusBuff, "1", 1);
 	
 	textview = GTK_WIDGET(gtk_builder_get_object (builder, "PosXText"));
 	gtk_text_view_set_buffer (GTK_TEXT_VIEW(textview), NewPlanetXPositionBuff);
+	gtk_text_buffer_set_text (NewPlanetXPositionBuff, "0", 1);
 	
 	textview = GTK_WIDGET(gtk_builder_get_object (builder, "PosYText"));
 	gtk_text_view_set_buffer (GTK_TEXT_VIEW(textview), NewPlanetYPositionBuff);
+	gtk_text_buffer_set_text (NewPlanetYPositionBuff, "0", 1);
 	
 	textview = GTK_WIDGET(gtk_builder_get_object (builder, "VelXText"));
 	gtk_text_view_set_buffer (GTK_TEXT_VIEW(textview), NewPlanetXSpeedBuff);
+	gtk_text_buffer_set_text (NewPlanetXSpeedBuff, "0", 1);
 	
 	textview = GTK_WIDGET(gtk_builder_get_object (builder, "VelYText"));
 	gtk_text_view_set_buffer (GTK_TEXT_VIEW(textview), NewPlanetYSpeedBuff);
-		
+	gtk_text_buffer_set_text (NewPlanetYSpeedBuff, "0", 1);
+	
 	NewPlanetColor = GTK_WIDGET(gtk_builder_get_object (builder, "ColorButton"));
 	
 	button = GTK_WIDGET(gtk_builder_get_object (builder, "NewButton"));
@@ -448,6 +318,7 @@ void createFinestraSimulatore(bool ss){
 	}else{
 		MPUGL = 500;
 	}
+	
 	//INIZIO LOOP GTK3
 	gtk_main();
 }
@@ -463,36 +334,36 @@ void updateCameraPosition(){
 	gtk_text_buffer_set_text (NewPlanetXPositionBuff, doubleToString(CCX).c_str(), doubleToString(CCX).size());
 	gtk_text_buffer_set_text (NewPlanetYPositionBuff, doubleToString(CCY).c_str(), doubleToString(CCY).size());
 }
-static void ZP (GtkWidget *widget, gpointer   data){
+void ZP (GtkWidget *widget, gpointer data){
 	MPUGL = MPUGL - 0.1 * MPUGL;
 	updateCameraPosition();
 }
-static void ZM (GtkWidget *widget, gpointer   data){
+void ZM (GtkWidget *widget, gpointer   data){
 	MPUGL = MPUGL + 0.1 * MPUGL;
 	updateCameraPosition();
 }
-static void SX (GtkWidget *widget, gpointer   data){
+void SX (GtkWidget *widget, gpointer   data){
 	CCX = CCX - 0.1 * MPUGL;
 	updateCameraPosition();
 }
-static void SU (GtkWidget *widget, gpointer   data){
+void SU (GtkWidget *widget, gpointer   data){
 	CCY = CCY + 0.1 * MPUGL;
 	updateCameraPosition();
 }
-static void DX (GtkWidget *widget, gpointer   data){
+void DX (GtkWidget *widget, gpointer   data){
 	CCX = CCX + 0.1 * MPUGL;
 	updateCameraPosition();
 }
-static void GIU (GtkWidget *widget, gpointer   data){
+void GIU (GtkWidget *widget, gpointer   data){
 	CCY = CCY - 0.1 * MPUGL;
 	updateCameraPosition();
 }
-static void Home (GtkWidget *widget, gpointer   data){
+void Home (GtkWidget *widget, gpointer   data){
 	CCX = 0;
 	CCY = 0;
 	updateCameraPosition();
 }
-static void Previus (GtkWidget *widget, gpointer   data){
+void Previus (GtkWidget *widget, gpointer   data){
 	if (static_cast<int>(P.size())!=0){
 		if (selected != 0 && selected != -1){
 			selected--;
@@ -511,7 +382,7 @@ static void Previus (GtkWidget *widget, gpointer   data){
 		gtk_label_set_text (PlanetInfoRadius, "-");
 	}
 }
-static void Next (GtkWidget *widget, gpointer   data){
+void Next (GtkWidget *widget, gpointer   data){
 	if (P.size()!=0){
 		if (selected!=static_cast<int>(P.size())-1){
 			selected++;
@@ -530,14 +401,14 @@ static void Next (GtkWidget *widget, gpointer   data){
 		gtk_label_set_text (PlanetInfoRadius, "-");
 	}
 }
-static void Delete (GtkWidget *widget, gpointer data){
+void Delete (GtkWidget *widget, gpointer data){
 	if ((P.size()!=0)&&(selected!=-1)){
 		P.erase(P.begin()+selected);
 		selected--;
 		Next(NULL, NULL);
 	}
 }
-static void NewPlanet (GtkWidget *widget, gpointer   data){
+void NewPlanet (GtkWidget *widget, gpointer   data){
 	std::string name;
 	std::stringstream ss("");
 	double radius, mass, xpos, ypos, xspeed, yspeed;
@@ -551,21 +422,34 @@ static void NewPlanet (GtkWidget *widget, gpointer   data){
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetMassBuff,&end, -1);
 	ss = std::stringstream(gtk_text_buffer_get_text (NewPlanetMassBuff, &start, &end, false));
 	ss >> mass;
+	if (abs(mass)<0.001){
+		std::cout << "!!! Rivelata presenza di massa uguale a 0! La setto al suo valore di default (1)!" << std::endl;
+		mass = 1.;
+	}
 	
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetRadiusBuff,&start, 0);
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetRadiusBuff,&end, -1);
 	ss = std::stringstream(gtk_text_buffer_get_text (NewPlanetRadiusBuff, &start, &end, false));
 	ss >> radius;
+	radius = abs(radius);
 	
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetXPositionBuff,&start, 0);
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetXPositionBuff,&end, -1);
 	ss = std::stringstream(gtk_text_buffer_get_text (NewPlanetXPositionBuff, &start, &end, false));
 	ss >> xpos;
+	if (abs(xpos)<RS && sistema_solare){
+		std::cout << "!!! Troppo vicino al Sole! Te lo Sposto!" << std::endl;
+		xpos = RS*1000;
+	}
 	
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetYPositionBuff,&start, 0);
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetYPositionBuff,&end, -1);
 	ss = std::stringstream(gtk_text_buffer_get_text (NewPlanetYPositionBuff, &start, &end, false));
 	ss >> ypos;
+	if (abs(ypos)<RS && sistema_solare){
+		std::cout << "!!! Troppo vicino al Sole! Te lo Sposto!" << std::endl;
+		ypos = RS*1000;
+	}
 	
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetXSpeedBuff,&start, 0);
 	gtk_text_buffer_get_iter_at_offset  (NewPlanetXSpeedBuff,&end, -1);
@@ -581,7 +465,7 @@ static void NewPlanet (GtkWidget *widget, gpointer   data){
 	
 	P.push_back(Pianeta(name, mass, radius, Vettore(xpos, ypos), Vettore(xspeed, yspeed), 1, rgba.red, rgba.green, rgba.blue));
 }
-static void ChangeTime (GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data){
+void ChangeTime (GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data){
 	if (value>100000){
 		value = 100000;
 	}
@@ -591,7 +475,7 @@ static void ChangeTime (GtkRange *range, GtkScrollType scroll, gdouble value, gp
 	gtk_range_set_value (range, value);
 	T = value;
 }
-static void ChangeRaggioSole (GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data){
+void ChangeRaggioSole (GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data){
 	if (value>0.05){
 		value = 0.05;
 	}
@@ -601,7 +485,7 @@ static void ChangeRaggioSole (GtkRange *range, GtkScrollType scroll, gdouble val
 	gtk_range_set_value (range, value);
 	raggioSole = value;
 }
-static void ChangeRaggioPianeti (GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data){
+void ChangeRaggioPianeti (GtkRange *range, GtkScrollType scroll, gdouble value, gpointer user_data){
 	if (value>0.01){
 		value = 0.01;
 	}
@@ -696,14 +580,14 @@ gboolean motore(gpointer user_data){
 						}
 					}
 				}
-			P[c].calcDati();
+			P[c].calcDati(T);
 		}
 	}
 	return false;
 }
 
 // FUNZIONE CHE DISEGNA UN CERCHIO
-void drawCircol(double Ux, double Uy, double Ur, double r, double g, double b, double a, bool rvero){
+void drawCircol(double const& Ux, double const& Uy, double Ur, double const& r, double const& g, double const& b, double const& a, bool const& rvero){
 	double ang = 0;
 	if (rvero){
 		Ur = Ur/MPUGL;
@@ -719,7 +603,7 @@ void drawCircol(double Ux, double Uy, double Ur, double r, double g, double b, d
 	}
 }
 // FUNZIONE CHE DISEGNA IL PUNTATORE
-void drawPointer(double Ux, double Uy, double r, double g, double b, double scale){
+void drawPointer(double const& Ux, double const& Uy, double const& r, double const& g, double const& b, double const& scale){
 	glColor4f(r, g, b, 1);
 	glBegin(GL_TRIANGLES);
                 glVertex2f(UTGLX(Ux), UTGLY(Uy));
@@ -737,7 +621,7 @@ void drawPointer(double Ux, double Uy, double r, double g, double b, double scal
     glEnd();
 }
 //FUNZIONE CHE CONVERTE DOUBLE IN STRINGHE
-std::string doubleToString(double dd){
+std::string doubleToString(double const & dd){
 	std::stringstream ss("");
 	ss << dd;
 	return ss.str();

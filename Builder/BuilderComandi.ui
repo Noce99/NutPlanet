@@ -21,7 +21,7 @@
        	<child>
           <object id="buttonSX" class="GtkButton">
             <property name="visible">True</property>
-            <property name="label">Sinistra</property>
+            <property name="label">Left</property>
           </object>
           <packing>
             <property name="left-attach">0</property>
@@ -31,7 +31,7 @@
         <child>
           <object id="buttonUP" class="GtkButton">
             <property name="visible">True</property>
-            <property name="label">Su</property>
+            <property name="label">Up</property>
           </object>
           <packing>
             <property name="left-attach">1</property>
@@ -41,7 +41,7 @@
         <child>
           <object id="buttonDW" class="GtkButton">
             <property name="visible">True</property>
-            <property name="label">Giù</property>
+            <property name="label">Down</property>
           </object>
           <packing>
             <property name="left-attach">1</property>
@@ -61,7 +61,7 @@
         <child>
           <object id="buttonDX" class="GtkButton">
             <property name="visible">True</property>
-            <property name="label">Destra</property>
+            <property name="label">Right</property>
           </object>
           <packing>
             <property name="left-attach">2</property>

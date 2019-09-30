@@ -7,5 +7,8 @@
 #include <sstream> //Necessaria per alcune conversioni tra tipi
 #include "GL/freeglut.h" //Necessaria per disegnare i pianeti e l'universo
 #include <gtk/gtk.h> //Necessaria per la creazione di menu, bottoni, label ecc
-void createFinestraSimulatore(bool);
+#include "Vettore.h"
+#include "Pianeta.h"
+#include "Esplosione.h"
+void createFinestraSimulatore(bool const &);
 #endif
